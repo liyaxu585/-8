@@ -1,0 +1,199 @@
+#include<iostream>
+#include<ctime>
+#include<functional>
+#include<random>
+#include<vector>
+#include<algorithm>
+#include<cstring>
+using namespace std;
+void bubblesort(vector<int>& nums){
+	for(int i = 0;i < nums.size(),i++){
+		for(int j = 0;j < nums.size()-i-1;j++){
+			if(nums[j] > nums[j+1]){
+				int temp = nums[j];
+				nums[j] = nums[j+1];
+				nums[j+1] = temp;
+			}
+		}
+	}
+}
+void chosesort(vector<int>& nums){
+	int m = nums.size();
+	for(int i = 0;i < m;i++){
+		int max_num = nums[0];
+	    int pos = 0;
+		for(int j = 0;j < m-i;j++){
+			if(nums[j] > max_num){
+				max_num = nums[j];
+				pos = j;
+			}
+		}
+		swap(nums[pos],nums[m-i-1]);
+	}
+}
+void insertsort(vector<int>& nums){
+	int m = nums.size();
+	for(int i = 1;i < m;i++){
+		int val = nums[i];
+		int pos = i;
+	    for(int j = i-1;j >= 0;j--){
+	    	if(nums[j] <= val){
+	    		pos = j+1;
+	    		break;
+			}
+			nums[j+1] = nums[j];
+			if(j==0){
+				pos = 0;
+			}
+		}
+		nums[pos] = val;
+	}
+}
+void XiErsort(vector<int>& nums){
+	int m = nums.size();
+	for(int groupsize = m/2;groupsize > 0;groupsize = groupsize/2){
+		for(int i = groupsize;i < m;i++){
+			int temp = nums[i];
+			int j = i - groupsize;
+			while(j >= 0&&nums[j] > temp){
+				nums[j+groupsize] = nums[j];
+				j -= groupsize;
+			}
+			nums[j+groupsize] = temp;
+		}
+	}
+}
+class GuiBing{
+private:
+	vector<int> temp;
+public:
+	void Merge(vector<int>& nums, int left, int mid, int right){
+	
+		int left1 = left;
+		int left2 = mid + 1;
+		while(left1 <= mid && left2 <= right){
+	
+			if(nums[left1] <= nums[left2]){
+				temp.push_back(nums[left1++]);
+			}
+			else{
+				temp.push_back(nums[left2++]);
+			}
+		}
+	
+		while(left1 <= mid){
+			temp.push_back(nums[left1++]);
+		}
+	
+		while(left2 <= right){
+			temp.push_back(nums[left2++]);
+		}
+	
+		for(int i = 0; i < temp.size(); i++){
+			nums[left + i] = temp[i];
+		}
+	}
+	void GuiBingsort(vector<int>& nums,int left,int right){
+		if(left == right){
+			return;
+		}
+		int mid = (left + right - 1)/2;
+		GuiBingsort(nums,left,mid);
+		GuiBingsort(nums,mid+1,right);
+		Merge(nums,left,mid,right);
+	}
+};
+class DaGenDui{
+private:
+   int size_;
+   int capacity;
+   int* p;
+   void heapifyUp(int size_){
+   	int n = size_;
+   	int val = p[size_];
+   	while(n > 0){
+   		int father = (n-1)/2;
+   		if(p[father] >= val){
+   			break;
+		   }
+   		p[n] = p[father];
+		n = father;
+	   }
+	   p[n] = val;
+   }
+   void heapifyDown(int size_){
+   	int i = 0;
+   	int target = (size_-2)/2;
+   	int val = p[0];
+   	int son;
+   	 while(i <= target){
+   	 	int son1 = 2*i+1;
+   	 	int son2 = 2*i+2;
+   	 	if(son2 < size_&&p[son2]>p[son1]){
+   	 		son = son2;
+			}
+		else{
+			son = son1;
+		}
+		if(p[son] <= val){
+			break;
+		}
+		p[i] = p[son];
+		i = son;
+		}
+		p[i] = val;
+   }
+   void expand(int new_cap){
+   	int* new_ = new int[new_cap];
+   	for(int i = 0;i < size_;i++){
+   		new_[i] = p[i];
+	   }
+	delete[] p;
+	p = nullptr;
+	capacity = new_cap;
+	p = new_;
+   }
+public:
+	DaGenDui(int capacity = 10)
+	   :capacity(cap),
+	   size(0)
+	   {
+	   	p(new int[capacity]);
+	   }
+		
+		
+		
+	void push(int val){
+		if(size_ == capacity){
+			expand(2 * capacity);
+		}
+		p[size_] = val;
+		heapifyUp(size_);
+		size_++;
+	}
+	void pop(){
+		if(size_ == 0){
+			throw"it is empty!";
+		}
+		p[0] = p[size_-1];
+		size_--;
+		heapifyDown(size_);
+	}
+	bool empty(){
+		if(size_ == 0){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	int size(){
+		return size_;
+	}
+	int top(){
+		if(size_ == 0){
+			throw"is empty!";
+		}
+		return p[0];
+	}
+};
